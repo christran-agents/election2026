@@ -162,8 +162,8 @@ function table(){const st=$("st").value,q=$("q").value.toLowerCase(),so=$("so").
  $("tb").innerHTML=f.map(r=>`<tr><td><b>${esc(r.k)}</b> ${flipB(r)}</td><td>${cn(r.a)}</td><td>${r.b?cn(r.b):r.a?"Unopposed":"–"}</td><td class="n">${r.m==null?"–":r.m.toFixed(1)}</td><td class="n">${r.ev==null?"–":r.ev+"%"}</td><td>${status(r)}</td><td>${esc(PN[r.ip]||"–")}</td><td>${r.cl?"–":r.pj&&r.pj.m!=null?`${esc(r.pj.p)} +${r.pj.m} (${r.pj.lo} to ${r.pj.hi}), ${esc(r.pj.cf)}`:"–"}</td></tr>`).join("")||'<tr><td colspan="8" class="small">No races match.</td></tr>'}
 function all(){hero();ticker();drawMap();closest();keys();tabsUI();table()}
 // countdown
-function cd(){if(!D)return;const next=new Date(D.utc).getTime()+6*60e3,s=Math.round((next-Date.now())/1e3);$("cd").textContent=s>0?`Next update in ${Math.floor(s/60)}:${String(s%60).padStart(2,"0")}`:"Update due, checking…"}
-setInterval(cd,1000);
+function cd(){if(!D)return;const t=new Date(D.utc).getTime(),age=Date.now()-t;if(age>10*60e3){$("cd").textContent="Waiting for the next update";return}const n=Math.max(1,Math.ceil((t+6*60e3-Date.now())/60e3));$("cd").textContent=`Next update in about ${n} min`}
+setInterval(cd,15000);
 async function load(){try{const r=await fetch("data.json?t="+Date.now(),{cache:"no-store"});const n=await r.json();if(D&&n.utc===D.utc)return;
  ["S","G","H","O"].forEach(k=>n[k].forEach(enrich));D=n;$("at").textContent=sgt(D.utc);all();cd()}catch(e){$("at").textContent="data unavailable, retrying"}}
 // controls

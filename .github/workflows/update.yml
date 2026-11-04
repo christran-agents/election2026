@@ -1,0 +1,27 @@
+name: Update results
+on:
+  schedule: [{cron: '*/5 * * * *'}]
+  workflow_dispatch:
+permissions: {contents: write}
+concurrency: {group: update-data, cancel-in-progress: false}
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch and build
+        env: {EL_DIR: "${{ runner.temp }}/el", EL_CALLS: "${{ github.workspace }}/calls.json"}
+        run: |
+          mkdir -p "$EL_DIR"
+          timeout 150 python3 scripts/fetch.py > /dev/null
+          python3 scripts/build_site.py
+          cp "$EL_DIR/site_data.json" data.json
+      - name: Commit if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data.json calls.json
+          if git diff --cached --quiet; then echo "no change"; exit 0; fi
+          git commit -m "Data update (Actions) $(TZ=Asia/Singapore date '+%F %H:%M SGT')"
+          for i in 1 2 3; do git pull --rebase -X theirs origin main && git push origin main && exit 0; sleep 5; done; exit 1
