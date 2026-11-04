@@ -1,6 +1,5 @@
 name: Update results
 on:
-  schedule: [{cron: '*/5 * * * *'}]
   workflow_dispatch:
 permissions: {contents: write}
 concurrency: {group: update-data, cancel-in-progress: false}
