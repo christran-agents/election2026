@@ -1,72 +1,178 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<link rel="icon" href="data:,"><title>US 2026 Election: Live Results and Estimates</title>
-<meta name="description" content="Live counts for Senate, governor, statewide offices and all 435 House seats.">
+<link rel="icon" href="data:,"><title>US 2026 Election: Live Results</title>
+<meta name="description" content="Live maps and results for Senate, Governor and House, 2026.">
 <style>
-:root{--a:#1d4ed8;--bg:#f7f8fa;--card:#fff;--b:#e3e6eb;--t:#1a1d23;--m:#5b6270}
-*{box-sizing:border-box}body{margin:0;font:15px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--t)}
-.w{max-width:1200px;margin:0 auto;padding:16px}h1{font-size:1.5rem;margin:.2em 0}h2{font-size:1.15rem;margin:0 0 .5em}
-.sub{color:var(--m);margin:0 0 16px}.card{background:var(--card);border:1px solid var(--b);border-radius:10px;padding:14px;margin-bottom:16px}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}@media(max-width:700px){.grid{grid-template-columns:1fr}}
-dl{display:grid;grid-template-columns:1fr auto;gap:6px 12px;margin:0}dt{color:var(--m)}dd{margin:0;font-weight:600;text-align:right}
-.tabs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}.tabs button{border:1px solid var(--b);background:#fff;border-radius:999px;padding:6px 12px;cursor:pointer;font:inherit;font-size:14px}
-.tabs button.on{background:var(--a);color:#fff;border-color:var(--a)}.tabs small{opacity:.75;margin-left:4px}
-.ctl{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px}@media(max-width:700px){.ctl{grid-template-columns:1fr}}
-label{display:block;font-size:13px;color:var(--m)}select,input{width:100%;padding:8px;border:1px solid var(--b);border-radius:6px;font:inherit;background:#fff}
-.tw{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:14px}th,td{padding:7px 8px;border-bottom:1px solid var(--b);text-align:left;white-space:nowrap}
-th{background:#f1f3f6;position:sticky;top:0}td.n,th.n{text-align:right}.called{color:#15803d;font-weight:600}.muted{color:var(--m)}
-.note{background:#eef3ff;border-left:3px solid var(--a);padding:10px;border-radius:6px}a{color:var(--a)}.foot{color:var(--m);font-size:13px}
+@font-face{font-family:Inter;src:url(fonts/inter-latin-400-normal.woff2) format("woff2");font-weight:400;font-display:swap}
+@font-face{font-family:Inter;src:url(fonts/inter-latin-500-normal.woff2) format("woff2");font-weight:500;font-display:swap}
+@font-face{font-family:Inter;src:url(fonts/inter-latin-600-normal.woff2) format("woff2");font-weight:600;font-display:swap}
+@font-face{font-family:Inter;src:url(fonts/inter-latin-700-normal.woff2) format("woff2");font-weight:700;font-display:swap}
+@font-face{font-family:Inter;src:url(fonts/inter-latin-800-normal.woff2) format("woff2");font-weight:800;font-display:swap}
+:root{--bg:#f5f6f8;--card:#fff;--b:#e6e8ec;--t:#14171c;--m:#667085;--a:#2563eb;--soft:#eef1f5;--none:#d9dde3;--sh:0 1px 2px rgba(16,24,40,.04),0 6px 24px rgba(16,24,40,.06);
+--d1:#1e4fa8;--d2:#3b76d6;--d3:#7aa6e8;--d4:#b8cff3;--r1:#b42318;--r2:#d9473a;--r3:#ec8b7f;--r4:#f6c3bc;--o1:#7c5cc4;--o3:#b9a5e3}
+[data-theme=dark]{--bg:#0e1117;--card:#161a22;--b:#262c37;--t:#e8ebf0;--m:#98a2b3;--soft:#1d222c;--none:#2c333f;--sh:0 1px 2px rgba(0,0,0,.3),0 8px 28px rgba(0,0,0,.35)}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;font:15px/1.5 Inter,system-ui,sans-serif;background:var(--bg);color:var(--t);transition:background .3s,color .3s;-webkit-font-smoothing:antialiased}
+.w{max-width:1180px;margin:0 auto;padding:20px 16px 60px}
+header{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:18px}
+h1{font-size:clamp(1.5rem,4.5vw,2.3rem);font-weight:800;letter-spacing:-.02em;margin:0;line-height:1.15}
+h2{font-size:1.1rem;font-weight:700;margin:0;letter-spacing:-.01em}h3{font-size:.95rem;margin:0;font-weight:600}
+.sub{color:var(--m);margin:6px 0 0;font-size:14px}.live{display:inline-flex;align-items:center;gap:6px;font-weight:600;color:var(--t)}
+.dot{width:8px;height:8px;border-radius:50%;background:#16a34a;box-shadow:0 0 0 0 rgba(22,163,74,.6);animation:p 2s infinite}@keyframes p{70%{box-shadow:0 0 0 8px rgba(22,163,74,0)}100%{box-shadow:0 0 0 0 rgba(22,163,74,0)}}
+.btn{border:1px solid var(--b);background:var(--card);color:var(--t);border-radius:999px;padding:8px 12px;font:inherit;font-size:13px;cursor:pointer;transition:all .2s}
+.card{background:var(--card);border:1px solid var(--b);border-radius:18px;box-shadow:var(--sh);padding:20px;margin-bottom:20px;transition:background .3s,border-color .3s}
+.hero{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}@media(max-width:900px){.hero{grid-template-columns:1fr}}
+.bop .row{display:flex;justify-content:space-between;align-items:baseline;margin:10px 0 8px}.big{font-size:2rem;font-weight:800;letter-spacing:-.02em;line-height:1}
+.dc{color:var(--d2)}.rc{color:var(--r2)}.lbl{font-size:12px;color:var(--m);text-transform:uppercase;letter-spacing:.06em;font-weight:600}
+.bar{position:relative;height:14px;border-radius:999px;background:var(--soft);overflow:hidden;display:flex}.bar span{height:100%;transition:width .8s cubic-bezier(.2,.8,.2,1)}
+.mid{position:absolute;left:50%;top:-4px;bottom:-4px;width:2px;background:var(--t);opacity:.5}
+.legend{display:flex;flex-wrap:wrap;gap:10px;font-size:12px;color:var(--m);margin-top:10px}.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.arc{width:100%;max-width:340px;display:block;margin:6px auto 0}
+.ticker{display:flex;align-items:center;gap:12px;overflow:hidden;padding:12px 16px}.ticker .tl{flex:none;font-weight:700;font-size:13px}
+.tk{display:flex;gap:28px;white-space:nowrap;animation:scroll 60s linear infinite;font-size:14px}.ticker:hover .tk{animation-play-state:paused}@keyframes scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.chip{display:inline-block;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:700;color:#fff;margin-right:6px}.D{background:var(--d1)}.R{background:var(--r1)}.O{background:var(--o1)}
+.maps{display:grid;grid-template-columns:2fr 1fr;gap:20px}@media(max-width:900px){.maps{grid-template-columns:1fr}}
+.seg{display:inline-flex;background:var(--soft);border-radius:999px;padding:3px;gap:2px;flex-wrap:wrap}.seg button{border:0;background:none;color:var(--m);padding:7px 14px;border-radius:999px;font:inherit;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s}
+.seg button.on{background:var(--card);color:var(--t);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.mhead{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+svg.map{width:100%;height:auto;display:block}svg.map path.st,svg.map rect.cell{stroke:var(--card);stroke-width:1;transition:opacity .2s,fill .4s;cursor:pointer}
+svg.map .st:hover,svg.map .cell:hover{opacity:.75}.tlab{font-size:9px;font-weight:700;fill:var(--m);pointer-events:none}
+.close li{display:grid;grid-template-columns:1fr auto;gap:2px 10px;padding:10px 0;border-bottom:1px solid var(--b);list-style:none}.close ul{padding:0;margin:0;max-height:520px;overflow:auto}
+.close .mg{font-weight:800;font-variant-numeric:tabular-nums}.small{font-size:12px;color:var(--m)}
+.mini{height:6px;border-radius:999px;background:var(--soft);overflow:hidden;display:flex;grid-column:1/-1}.mini span{height:100%}
+.keys{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(250px,1fr);gap:14px;overflow-x:auto;padding:4px 2px 10px;scroll-snap-type:x mandatory}
+.kc{border:1px solid var(--b);border-radius:14px;padding:14px;scroll-snap-align:start;background:var(--card);transition:transform .2s}.kc:hover{transform:translateY(-2px)}
+.cand{display:flex;align-items:center;gap:10px;margin-top:10px}.av{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:700;font-size:13px;flex:none}
+.cand .nm{flex:1;min-width:0;font-weight:600;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.pc{font-weight:700;font-variant-numeric:tabular-nums}
+.badge{display:inline-block;font-size:10px;font-weight:700;padding:2px 7px;border-radius:999px;background:var(--soft);color:var(--m);margin-left:4px;vertical-align:1px}.badge.flip{background:#fef3c7;color:#92400e}.badge.ok{background:#dcfce7;color:#166534}
+[data-theme=dark] .badge.flip{background:#422006;color:#fcd34d}[data-theme=dark] .badge.ok{background:#052e16;color:#86efac}
+#tip{position:fixed;z-index:9;pointer-events:none;background:var(--card);color:var(--t);border:1px solid var(--b);border-radius:12px;box-shadow:var(--sh);padding:12px 14px;font-size:13px;min-width:200px;max-width:280px;opacity:0;transition:opacity .15s}
+#tip .tr{display:flex;justify-content:space-between;gap:10px;margin-top:4px}
+details summary{cursor:pointer;font-weight:700;font-size:1.1rem;list-style:none}details summary::after{content:" ▸";color:var(--m)}details[open] summary::after{content:" ▾"}
+.ctl{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:14px 0}@media(max-width:700px){.ctl{grid-template-columns:1fr}}
+label{display:block;font-size:12px;color:var(--m);font-weight:600;margin-bottom:4px}select,input{width:100%;padding:10px;border:1px solid var(--b);border-radius:10px;font:inherit;background:var(--card);color:var(--t)}
+.sortlbl{color:var(--a)}.tw{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:13px}th,td{padding:9px 8px;border-bottom:1px solid var(--b);text-align:left;white-space:nowrap}th{color:var(--m);font-weight:600;font-size:12px}td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
+.note{background:var(--soft);border-radius:12px;padding:12px 14px;font-size:14px}a{color:var(--a)}.foot{color:var(--m);font-size:13px}
 </style></head><body><div class="w">
-<h1>US 2026 General Election: Results and Estimates</h1>
-<p class="sub">Live counts from the 3 Nov 2026 election. <b>Last updated: <span id="at">loading…</span></b></p>
-<div class="card"><h2>Control of Congress</h2><p class="muted">Senate counts include seats not up this year. Estimates add uncalled races where SuperChief's estimate has medium or high confidence. SuperChief's estimate, not a race call.</p>
-<div class="grid"><div><h2>Senate</h2><dl id="cS"></dl></div><div><h2>House</h2><dl id="cH"></dl></div></div></div>
-<div class="card"><h2>Races</h2><div class="tabs" id="tabs"></div>
-<div class="ctl"><div><label for="st">State</label><select id="st"></select></div>
-<div><label for="so">Sort by</label><select id="so"><option value="race">Race</option><option value="margin">Closest margin</option><option value="reported">Most reported</option></select></div>
-<div><label for="q">Search</label><input id="q" placeholder="Race or candidate"></div></div>
-<p class="muted" id="cnt"></p><div class="tw"><table><thead><tr><th>Race</th><th>Leader</th><th>Second</th><th class="n">Margin</th><th class="n">Reported</th><th>Status</th><th>SuperChief's estimate, not a race call</th><th>Confidence</th><th>Rating</th></tr></thead><tbody id="tb"></tbody></table></div>
-<p class="muted">Margin is the leader's lead in points over second place in votes counted so far. Reported is the share of expected vote counted. Rating is the results feed's pre-election rating.</p></div>
-<div class="card"><h2>How the estimate works</h2>
-<p>SuperChief's estimate is not a race call. For each uncalled race it takes the current lead and assumes the uncounted vote lands within 20 points either side of it, so the range is the current margin plus or minus 20 points times the share still uncounted. Confidence is high when the whole range favors the leader and the lead is 10 points or more, medium when the range still favors the leader, low when it crosses zero, and very low under 10% reported.</p>
-<p>A called flip comes from the results feed. A possible flip means the current leader's party differs from the incumbent's. Competitive House combines the feed's toss-up and lean ratings with the closest uncalled margins, up to 60 races. Too close to call lists uncalled races with a lead under 5 points and low or very low confidence.</p>
+<header><div><h1>US 2026 Election</h1><p class="sub"><span class="live"><span class="dot"></span>Live</span> · Updated <b id="at">loading…</b> · <span id="cd"></span></p></div>
+<button class="btn" id="theme" aria-label="Toggle dark mode">◐ Dark</button></header>
+<section class="hero" id="hero"></section>
+<div class="card ticker"><span class="tl">Latest calls</span><div style="overflow:hidden;flex:1"><div class="tk" id="tk"></div></div></div>
+<section class="maps">
+<div class="card"><div class="mhead"><h2 id="mt">Senate map</h2><div class="seg" id="mapSeg"><button data-v="S" class="on">Senate</button><button data-v="G">Governor</button><button data-v="H">House</button></div></div>
+<div id="map"></div>
+<div class="legend"><span><i style="background:var(--d1)"></i>Dem 20+</span><span><i style="background:var(--d2)"></i>10–20</span><span><i style="background:var(--d3)"></i>5–10</span><span><i style="background:var(--d4)"></i>&lt;5</span><span><i style="background:var(--r4)"></i>Rep &lt;5</span><span><i style="background:var(--r3)"></i>5–10</span><span><i style="background:var(--r2)"></i>10–20</span><span><i style="background:var(--r1)"></i>20+</span><span><i style="background:var(--none)"></i>No race or no results</span><span>Outlined = called</span></div>
+<p class="small" id="mapnote"></p></div>
+<div class="card close"><div class="mhead"><h2>Closest races</h2><div class="seg" id="closeSeg"><button data-v="S" class="on">Senate</button><button data-v="H">House</button><button data-v="G">Gov</button></div></div>
+<p class="small">Sorted by smallest margin in votes counted so far.</p><ul id="closeList"></ul></div>
+</section>
+<div class="card"><div class="mhead"><h2>Key races</h2><span class="small">Toss-up and lean races, closest first</span></div><div class="keys" id="keys"></div></div>
+<div class="card"><details id="full"><summary>Full results</summary>
+<div class="seg" id="tabs" style="margin-top:14px"></div>
+<div class="ctl"><div><label for="so" class="sortlbl">Sort by</label><select id="so"><option value="margin">Closest margin</option><option value="race">Race</option><option value="reported">Most reported</option></select></div>
+<div><label for="st">State</label><select id="st"></select></div><div><label for="q">Search</label><input id="q" placeholder="Race or candidate"></div></div>
+<p class="small" id="cnt"></p><div class="tw"><table><thead><tr><th>Race</th><th>Leader</th><th>Second</th><th class="n">Margin</th><th class="n">Expected vote in</th><th>Status</th><th>Prior</th><th>SuperChief's estimate, not a race call</th></tr></thead><tbody id="tb"></tbody></table></div></details></div>
+<div class="card"><h2>How to read this</h2>
+<p>Margin is the leader's lead in points over second place in votes counted so far. "Expected vote in" is the share of the expected total vote counted. Race calls come from the results feed and name the outlet that made them. Prior is the party that held the seat before; a flip badge means the seat changed party (called) or the current leader differs from the prior holder (leading).</p>
+<p><b>SuperChief's estimate, not a race call.</b> For uncalled races it assumes the uncounted vote lands within 20 points either side of the current lead. Confidence is high when the whole range favors the leader by 10+ points, medium when the range still favors the leader, low when it crosses zero, and very low under 10% counted. Balance bars count "leading" from votes counted, not from calls.</p>
 <p class="note">Exit polls: none are published in the public feeds checked, so none are shown.</p></div>
-<div class="card foot">Results data: The New York Times / AP. Source: <a href="https://www.nytimes.com/interactive/2026/11/03/us/elections/results-house.html" rel="noopener">New York Times live results</a>. Race calls name the outlet that made them. Page refreshes data every 5 minutes.</div>
-</div>
+<p class="foot">Results data: The New York Times / AP. Source: <a href="https://www.nytimes.com/interactive/2026/11/03/us/elections/results-house.html" rel="noopener">New York Times live results</a>. Governor seats not up in 2026 use the party holding office before the election. Data refreshes about every 5 minutes.</p>
+</div><div id="tip"></div>
+<script src="vendor/d3.min.js"></script><script src="vendor/topojson-client.min.js"></script>
 <script>
-const RTL={T:"Toss-up",LD:"Lean D",LR:"Lean R",KD:"Likely D",KR:"Likely R",SD:"Solid D",SR:"Solid R"};
-const $=id=>document.getElementById(id),esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-function parse(x,kind,suf){let r;
- if(typeof x==="string"){const p=x.split("|");r={race:p[0]+suf,st:p[0].slice(0,2),a:"",ap:"",apct:null,b:"",bp:"",bpct:null,ev:null,by:p[1],wp:p[2],w:"",fl:0,ip:p[3],rt:p[4]}}
- else{const n=i=>x[i]===null?null:Number(x[i]),s=i=>String(x[i]??"");r={race:s(0)+suf,st:s(0).slice(0,2),a:s(1),ap:s(2),apct:n(3),b:s(4),bp:s(5),bpct:n(6),ev:n(7),by:s(8),wp:s(9),w:s(10),fl:Number(x[11]),ip:s(12),rt:s(13)}}
- r.m=null;r.pl="";r.pp="";r.pm="";r.cf="";r.kind=kind;
- if(r.apct!==null)r.m=r.bpct!==null?Math.round((r.apct-r.bpct)*10)/10:100;
- if(!r.by&&r.m!==null&&r.ev!==null){const h=20*(1-Math.min(r.ev,100)/100),lo=r.m-h,hi=r.m+h;r.pl=`${r.a} (${r.ap})`;r.pp=r.ap;
-  r.pm=`+${r.m.toFixed(1)} (${lo>=0?"+":""}${lo.toFixed(1)} to +${hi.toFixed(1)})`;r.cf=r.ev<10?"Very low":lo>0&&r.m>=10?"High":lo>0?"Medium":"Low"}
- return r}
-let D,S,G,O,H,ALL,COMP,tab="senate";
-const isClose=r=>!r.by&&r.m!==null&&r.m<5&&(r.cf==="Low"||r.cf==="Very low"),isFlip=r=>r.fl>0;
-function seats(rows,won){const p=[...won];let u=0;for(const r of rows){if(r.by)continue;if(r.cf==="High"||r.cf==="Medium")p[r.pp==="D"?0:r.pp==="R"?1:2]++;else u++}return{p,u}}
-function ctl(el,won,s,maj,tot,called){$(el).innerHTML=[["Majority",`${maj} of ${tot} seats`],["Seats held or called (D / R / Other)",won.join(" / ")],["Plus SuperChief's estimate (D / R / Other)",s.p.join(" / ")],["Uncertain or no data",`${s.u} races`],["Races called this cycle",called]].map(([a,b])=>`<dt>${a}</dt><dd>${b}</dd>`).join("")}
-function base(){return tab==="senate"?S:tab==="gov"?G:tab==="other"?O:tab==="house"?H:tab==="comp"?H.filter(r=>COMP.has(r.race)):tab==="flips"?ALL.filter(isFlip):ALL.filter(isClose)}
-function states(){const b=base(),cur=$("st").value||"All";const l=["All",...[...new Set(b.map(r=>r.st))].sort()];$("st").innerHTML=l.map(s=>`<option>${s}</option>`).join("");$("st").value=l.includes(cur)?cur:"All"}
-function render(){const st=$("st").value,q=$("q").value.toLowerCase(),so=$("so").value;
- const f=base().filter(r=>(st==="All"||r.st===st)&&(!q||`${r.race} ${r.a} ${r.b}`.toLowerCase().includes(q)));
- if(so==="margin")f.sort((a,b)=>(a.m??999)-(b.m??999));else if(so==="reported")f.sort((a,b)=>(b.ev??-1)-(a.ev??-1));else f.sort((a,b)=>a.race.localeCompare(b.race,undefined,{numeric:true}));
- $("cnt").textContent=`${f.length} races`;
- $("tb").innerHTML=f.map(r=>{const lab=r.race+(r.fl===1?" (flip)":r.fl===2?" (possible flip)":"");
-  const status=r.by?`<span class="called">Called ${r.w?esc(r.w)+" ":""}(${esc(r.wp)}) by ${esc(r.by)}</span>`:r.ev===null?'<span class="muted">no data</span>':"Not called";
-  const c=[esc(lab),r.a?esc(`${r.a} (${r.ap}) ${r.apct}%`):"no data",r.b?esc(`${r.b} (${r.bp}) ${r.bpct??""}%`):r.a?"Unopposed":"no data"];
-  return `<tr><td>${c[0]}</td><td>${c[1]}</td><td>${c[2]}</td><td class="n">${r.m===null?"–":r.m.toFixed(1)}</td><td class="n">${r.ev===null?"–":r.ev+"%"}</td><td>${status}</td><td>${r.by?"Called":r.pl?esc(r.pl+" "+r.pm):"no data"}</td><td>${r.by?"":r.cf||"no data"}</td><td>${RTL[r.rt]??""}</td></tr>`}).join("")||'<tr><td colspan="9" class="muted">No races match.</td></tr>'}
-function tabsUI(){const t=[["senate","Senate",S.length],["gov","Governor",G.length],["other","Other statewide",O.length],["house","House",H.length],["comp","Competitive House",COMP.size],["flips","Flips",ALL.filter(isFlip).length],["close","Too close to call",ALL.filter(isClose).length]];
- $("tabs").innerHTML=t.map(([v,l,c])=>`<button data-v="${v}" class="${v===tab?"on":""}">${l}<small>${c}</small></button>`).join("")}
-async function load(){try{const res=await fetch("data.json?t="+Date.now(),{cache:"no-store"});D=await res.json()}catch(e){$("at").textContent="data unavailable, retrying";return}
- H=D.H.map(x=>parse(x,"House",""));S=D.S.map(x=>parse(x,"Senate"," Senate"));G=D.G.map(x=>parse(x,"Governor"," Governor"));O=D.O.map(x=>parse(x,"Statewide",""));ALL=[...S,...G,...O,...H];
- COMP=new Set(H.filter(r=>["T","LD","LR"].includes(r.rt)).map(r=>r.race));for(const r of H.filter(r=>!r.by&&r.m!==null&&(r.ev??0)>=10).sort((a,b)=>a.m-b.m)){if(COMP.size>=60)break;COMP.add(r.race)}
- $("at").textContent=/SGT/.test(D.at)?D.at:D.at+" SGT";
- ctl("cS",D.sc,seats(S,D.sc),51,100,S.filter(r=>r.by).length);ctl("cH",D.hc,seats(H,D.hc),218,435,H.filter(r=>r.by).length);
- tabsUI();states();render()}
-$("tabs").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;tab=b.dataset.v;$("st").value="All";tabsUI();states();render()});
-["st","so"].forEach(i=>$(i).addEventListener("change",render));$("q").addEventListener("input",render);
-load();setInterval(load,300000);
+const $=i=>document.getElementById(i),esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const NAMES={AL:"Alabama",AK:"Alaska",AZ:"Arizona",AR:"Arkansas",CA:"California",CO:"Colorado",CT:"Connecticut",DE:"Delaware",FL:"Florida",GA:"Georgia",HI:"Hawaii",ID:"Idaho",IL:"Illinois",IN:"Indiana",IA:"Iowa",KS:"Kansas",KY:"Kentucky",LA:"Louisiana",ME:"Maine",MD:"Maryland",MA:"Massachusetts",MI:"Michigan",MN:"Minnesota",MS:"Mississippi",MO:"Missouri",MT:"Montana",NE:"Nebraska",NV:"Nevada",NH:"New Hampshire",NJ:"New Jersey",NM:"New Mexico",NY:"New York",NC:"North Carolina",ND:"North Dakota",OH:"Ohio",OK:"Oklahoma",OR:"Oregon",PA:"Pennsylvania",RI:"Rhode Island",SC:"South Carolina",SD:"South Dakota",TN:"Tennessee",TX:"Texas",UT:"Utah",VT:"Vermont",VA:"Virginia",WA:"Washington",WV:"West Virginia",WI:"Wisconsin",WY:"Wyoming",DC:"District of Columbia"};
+const AB=Object.fromEntries(Object.entries(NAMES).map(([a,n])=>[n,a]));
+const TILE={AK:[0,0],ME:[11,0],WI:[6,1],VT:[10,1],NH:[11,1],WA:[1,2],ID:[2,2],MT:[3,2],ND:[4,2],MN:[5,2],IL:[6,2],MI:[7,2],NY:[9,2],MA:[10,2],OR:[1,3],NV:[2,3],WY:[3,3],SD:[4,3],IA:[5,3],IN:[6,3],OH:[7,3],PA:[8,3],NJ:[9,3],CT:[10,3],RI:[11,3],CA:[1,4],UT:[2,4],CO:[3,4],NE:[4,4],MO:[5,4],KY:[6,4],WV:[7,4],VA:[8,4],MD:[9,4],DE:[10,4],AZ:[2,5],NM:[3,5],KS:[4,5],AR:[5,5],TN:[6,5],NC:[7,5],SC:[8,5],OK:[4,6],LA:[5,6],MS:[6,6],AL:[7,6],GA:[8,6],HI:[0,7],TX:[4,7],FL:[9,7]};
+const RT={tossup:"Toss-up","lean-dem":"Lean D","lean-rep":"Lean R","likely-dem":"Likely D","likely-rep":"Likely R","solid-dem":"Solid D","solid-rep":"Solid R"};
+const PN={D:"Dem",R:"Rep",O:"Other"};
+let D,topo,mapK="S",closeK="S",tab="S";
+const css=v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+function enrich(r){const c=r.c||[];r.a=c[0];r.b=c[1];r.has=!!(r.tv&&r.a&&r.a.pc!=null);
+ r.m=r.has?(r.b&&r.b.pc!=null?Math.round((r.a.pc-r.b.pc)*10)/10:100):null;r.lp=r.cl?r.wp:r.has?r.a.p:"";
+ r.flipC=r.cl&&r.ip&&r.wp&&r.wp!==r.ip;r.flipL=!r.cl&&r.has&&r.ip&&r.lp!==r.ip;return r}
+function fill(r){if(!r||!r.lp||(!r.cl&&!r.has))return css("--none");const m=r.m??100,p=r.lp==="D"?"d":r.lp==="R"?"r":"o";
+ if(p==="o")return css(r.cl?"--o1":"--o3");const i=m>=20?1:m>=10?2:m>=5?3:4;return css(`--${p}${i}`)}
+function sgt(iso){return iso?new Date(iso).toLocaleString("en-SG",{timeZone:"Asia/Singapore",day:"numeric",month:"short",hour:"numeric",minute:"2-digit"})+" SGT":""}
+function status(r){return r.cl?`<span class="badge ok">Called ${esc(PN[r.wp]||r.wp)} · ${esc(r.by)}</span>`:r.has?'<span class="badge">Not called</span>':'<span class="badge">No results yet</span>'}
+function flipB(r){return r.flipC?'<span class="badge flip">Flip</span>':r.flipL?'<span class="badge flip">Leader differs from prior</span>':""}
+// tooltip
+const tip=$("tip");let pinned=false;
+function tipHTML(r,title){if(!r)return`<b>${esc(title)}</b><div class="small">No race this year</div>`;
+ const cs=(r.c||[]).map(c=>`<div class="tr"><span><span class="chip ${c.p==="D"?"D":c.p==="R"?"R":"O"}">${c.p}</span>${esc(c.n)}${c.i?" (inc.)":""}</span><b>${c.pc!=null?c.pc+"%":"–"}</b></div>`).join("");
+ return`<b>${esc(title)}</b> ${flipB(r)}<div style="margin:4px 0">${status(r)}</div>${cs}<div class="small" style="margin-top:6px">${r.ev!=null?r.ev+"% of expected vote in":"No votes reported"}${r.m!=null&&r.m<100?` · margin ${r.m.toFixed(1)}`:""}${r.ip?` · prior ${PN[r.ip]||r.ip}`:""}</div>`}
+function showTip(e,html){tip.innerHTML=html;tip.style.opacity=1;const x=Math.min(e.clientX+14,innerWidth-tip.offsetWidth-8),y=Math.min(e.clientY+14,innerHeight-tip.offsetHeight-8);tip.style.left=Math.max(8,x)+"px";tip.style.top=Math.max(8,y)+"px"}
+function bindTip(sel,get){sel.on("mousemove",(e,d)=>{if(!pinned)showTip(e,get(d))}).on("mouseleave",()=>{if(!pinned)tip.style.opacity=0}).on("click",(e,d)=>{e.stopPropagation();pinned=true;showTip(e,get(d))})}
+document.addEventListener("click",()=>{pinned=false;tip.style.opacity=0});
+// maps
+function stateMap(rows){const by={};rows.forEach(r=>{(by[r.s]=by[r.s]||[]).push(r)});
+ const g=topojson.feature(topo,topo.objects.states),path=d3.geoPath();$("map").innerHTML="";
+ const svg=d3.select("#map").append("svg").attr("class","map").attr("viewBox","0 0 975 610").attr("role","img").attr("aria-label",mapK==="S"?"Senate map":"Governor map");
+ const pick=a=>a?a.slice().sort((x,y)=>(x.k.includes("special")?1:0)-(y.k.includes("special")?1:0))[0]:null;
+ const p=svg.selectAll("path").data(g.features).join("path").attr("class","st").attr("d",path).attr("fill",f=>fill(pick(by[AB[f.properties.name]]))).attr("stroke",f=>{const r=pick(by[AB[f.properties.name]]);return r&&r.cl?css("--t"):css("--card")}).attr("stroke-width",f=>{const r=pick(by[AB[f.properties.name]]);return r&&r.cl?1.6:1});
+ bindTip(p,f=>{const a=by[AB[f.properties.name]];return a?a.map(r=>tipHTML(r,f.properties.name+(r.k.includes("special")?" (special)":""))).join('<hr style="border:0;border-top:1px solid var(--b)">'):tipHTML(null,f.properties.name)});
+ svg.append("path").datum(topojson.mesh(topo,topo.objects.states,(a,b)=>a!==b)).attr("fill","none").attr("stroke",css("--card")).attr("stroke-width",.6).attr("pointer-events","none")}
+function houseMap(rows){const by={};rows.forEach(r=>{(by[r.s]=by[r.s]||[]).push(r)});Object.values(by).forEach(a=>a.sort((x,y)=>x.k.localeCompare(y.k,undefined,{numeric:true})));
+ const T=78,G=4;$("map").innerHTML="";const svg=d3.select("#map").append("svg").attr("class","map").attr("viewBox",`0 0 ${12*T} ${8*T}`).attr("role","img").attr("aria-label","House district tile map");
+ const cells=[];for(const[s,[cx,cy]]of Object.entries(TILE)){const a=by[s]||[];const n=a.length;if(!n)continue;const k=Math.ceil(Math.sqrt(n)),inner=T-G*2-12,cs=inner/k;
+  svg.append("text").attr("class","tlab").attr("x",cx*T+G).attr("y",cy*T+11).text(s);
+  a.forEach((r,i)=>cells.push({r,x:cx*T+G+(i%k)*cs,y:cy*T+14+Math.floor(i/k)*cs,w:cs}))}
+ const c=svg.selectAll("rect.cell").data(cells).join("rect").attr("class","cell").attr("x",d=>d.x).attr("y",d=>d.y).attr("width",d=>d.w-.8).attr("height",d=>d.w-.8).attr("rx",d=>Math.min(3,d.w/5)).attr("fill",d=>fill(d.r)).attr("stroke",d=>d.r.cl?css("--t"):"none").attr("stroke-width",d=>d.r.cl?.8:0);
+ bindTip(c,d=>tipHTML(d.r,d.r.k))}
+function drawMap(){const rows=D[mapK];$("mt").textContent={S:"Senate map",G:"Governor map",H:"House map"}[mapK];
+ $("mapnote").textContent=mapK==="H"?"Each square is one district, grouped by state (tile layout, not to scale). Tap or hover for details.":mapK==="S"?"Florida and Ohio hold special elections. Gray states have no Senate race this year or no results yet.":"Gray states have no governor's race this year or no results yet.";
+ mapK==="H"?houseMap(rows):stateMap(rows)}
+// hero
+function tally(rows,base){const w={D:base.D||0,R:base.R||0,O:base.O||0},l={D:0,R:0,O:0};let open=0;
+ rows.forEach(r=>{if(r.cl){const p=r.wp==="D"?"D":r.wp==="R"?"R":"O";w[p]++;return}if(r.has&&r.ev>0)l[r.a.p==="D"?"D":r.a.p==="R"?"R":"O"]++;else open++});return{w,l,open}}
+function arc(t,total){const rows=total>200?11:total>60?6:4,R=150,r0=R*.42,pts=[];const radii=d3.range(rows).map(i=>r0+(R-r0)*(i/(rows-1)));const sum=d3.sum(radii);
+ let left=total;radii.forEach((ri,i)=>{const n=i===rows-1?left:Math.round(total*ri/sum);left-=n;for(let j=0;j<n;j++){const a=Math.PI*(1-(n===1?.5:j/(n-1)));pts.push({x:160+ri*Math.cos(a),y:160-ri*Math.sin(a),a})}});
+ pts.sort((p,q)=>q.a-p.a);const seq=[[t.w.D,"--d1"],[t.l.D,"--d4"],[t.w.O+t.l.O,"--o3"],[t.open,"--none"],[t.l.R,"--r4"],[t.w.R,"--r1"]];const cols=[];seq.forEach(([n,c])=>{for(let i=0;i<n;i++)cols.push(css(c))});
+ const rr=total>200?4.2:total>60?7:9;return`<svg class="arc" viewBox="0 0 320 170" aria-hidden="true">${pts.map((p,i)=>`<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="${rr}" fill="${cols[i]||css("--none")}"/>`).join("")}</svg>`}
+function bop(title,t,total,need,note){const pc=n=>(100*n/total).toFixed(2)+"%";const dT=t.w.D+t.l.D,rT=t.w.R+t.l.R;
+ return`<div class="card bop"><div class="lbl">${title}</div><div class="row"><div><div class="big dc">${t.w.D}</div><div class="small">Dem won · +${t.l.D} leading</div></div><div style="text-align:center"><div class="small">${need} for majority</div><div class="small">${t.w.O+t.l.O?`Other ${t.w.O}+${t.l.O}`:""}</div></div><div style="text-align:right"><div class="big rc">${t.w.R}</div><div class="small">Rep won · +${t.l.R} leading</div></div></div>
+ <div class="bar"><span style="width:${pc(t.w.D)};background:var(--d1)"></span><span style="width:${pc(t.l.D)};background:var(--d4)"></span><span style="width:${pc(t.w.O+t.l.O)};background:var(--o3)"></span><span style="flex:1"></span><span style="width:${pc(t.l.R)};background:var(--r4)"></span><span style="width:${pc(t.w.R)};background:var(--r1)"></span><i class="mid"></i></div>
+ ${arc(t,total)}<div class="small" style="text-align:center">${t.open} not yet reporting · ${note}</div><div class="small" style="text-align:center">Won + leading: Dem ${dT} · Rep ${rT}</div></div>`}
+function hero(){const c=D.control,sw=c.S.noElection||{},gb={D:0,R:0,O:0};Object.values(D.govNotUp).forEach(p=>gb[p]++);
+ $("hero").innerHTML=bop("Senate",tally(D.S,sw),100,51,"includes seats not up")+bop("House",tally(D.H,{}),435,218,"all 435 seats up")+bop("Governors",tally(D.G,gb),50,26,"includes 14 not up");}
+// ticker
+function ticker(){const all=[...D.S.map(r=>[r,"Senate"]),...D.G.map(r=>[r,"Governor"]),...D.H.map(r=>[r,"House"])].filter(([r])=>r.cl&&r.ct).sort((a,b)=>b[0].ct.localeCompare(a[0].ct)).slice(0,25);
+ const h=all.map(([r,o])=>`<span><span class="chip ${r.wp==="D"?"D":r.wp==="R"?"R":"O"}">${esc(r.wp)}</span><b>${esc(r.w||r.a?.n||"")}</b> wins ${esc(o==="House"?r.k:NAMES[r.s]+(r.k.includes("special")?" special":"")+" "+o)} ${r.flipC?'<span class="badge flip">Flip</span>':""} <span class="small">${esc(r.by)} · seen ${sgt(r.ct)}</span></span>`).join("");
+ $("tk").innerHTML=h?h+h:'<span class="small">No calls yet</span>'}
+// closest
+function closest(){const rows=D[closeK].filter(r=>r.has&&r.b&&!r.u).sort((a,b)=>(a.cl-b.cl)||(a.m-b.m)).slice(0,25);
+ $("closeList").innerHTML=rows.map(r=>{const t=r.a.pc+r.b.pc;return`<li><div><b>${esc(closeK==="H"?r.k:NAMES[r.s]+(r.k.includes("special")?" special":""))}</b> ${flipB(r)}<div class="small">${esc(r.a.n)} (${r.a.p}) ${r.a.pc}% · ${esc(r.b.n)} (${r.b.p}) ${r.b.pc}%</div><div class="small">${r.ev}% in · ${r.cl?"Called "+esc(r.by):"Not called"}</div></div><div class="mg ${r.a.p==="D"?"dc":r.a.p==="R"?"rc":""}">+${r.m.toFixed(1)}</div>
+ <div class="mini"><span style="width:${100*r.a.pc/t}%;background:var(--${r.a.p==="D"?"d2":r.a.p==="R"?"r2":"o1"})"></span><span style="flex:1;background:var(--${r.b.p==="D"?"d2":r.b.p==="R"?"r2":"o1"})"></span></div></li>`}).join("")||'<li class="small">No results yet</li>'}
+// key races
+function keys(){const comp=[...D.S.map(r=>[r,"Senate"]),...D.G.map(r=>[r,"Governor"]),...D.H.map(r=>[r,"House"])].filter(([r])=>["tossup","lean-dem","lean-rep"].includes(r.rt))
+ .sort((a,b)=>(a[0].cl-b[0].cl)||((a[0].m??50)-(b[0].m??50))).slice(0,16);
+ const ini=n=>String(n).split(" ").filter(Boolean).map(w=>w[0]).slice(0,2).join("").toUpperCase();
+ $("keys").innerHTML=comp.map(([r,o])=>`<div class="kc"><div class="small">${esc(o)} · ${esc(RT[r.rt])}</div><h3>${esc(o==="House"?r.k:NAMES[r.s]+(r.k.includes("special")?" special":""))} ${flipB(r)}</h3>
+ ${(r.c||[]).slice(0,2).map(c=>`<div class="cand"><div class="av ${c.p==="D"?"D":c.p==="R"?"R":"O"}">${esc(ini(c.n))}</div><div class="nm">${esc(c.n)}${c.i?' <span class="small">inc.</span>':""}</div><div class="pc">${c.pc!=null?c.pc+"%":"–"}</div></div>`).join("")}
+ <div class="small" style="margin-top:10px">${status(r)} ${r.ev!=null?r.ev+"% in":"No votes yet"}${r.m!=null&&r.m<100?` · margin ${r.m.toFixed(1)}`:""}</div></div>`).join("")}
+// table
+const TABS=[["S","Senate"],["G","Governor"],["O","Other statewide"],["H","House"],["comp","Competitive House"],["flips","Flips"],["close","Too close to call"]];
+const isClose=r=>!r.cl&&r.m!=null&&r.m<5&&r.pj&&/low/.test(r.pj.cf||"");
+function base(){const all=[...D.S,...D.G,...D.O,...D.H];if(D[tab])return D[tab];if(tab==="comp")return D.H.filter(r=>["tossup","lean-dem","lean-rep"].includes(r.rt)||(!r.cl&&r.m!=null&&r.m<5&&r.ev>=10));if(tab==="flips")return all.filter(r=>r.flipC||r.flipL||r.fl);return all.filter(isClose)}
+function tabsUI(){$("tabs").innerHTML=TABS.map(([v,l])=>`<button data-v="${v}" class="${v===tab?"on":""}">${l}</button>`).join("");const l=["All",...[...new Set(base().map(r=>r.s))].sort()],cur=$("st").value;$("st").innerHTML=l.map(s=>`<option>${s}</option>`).join("");$("st").value=l.includes(cur)?cur:"All"}
+function table(){const st=$("st").value,q=$("q").value.toLowerCase(),so=$("so").value;
+ const f=base().filter(r=>(st==="All"||r.s===st)&&(!q||`${r.k} ${(r.c||[]).map(c=>c.n).join(" ")}`.toLowerCase().includes(q)));
+ if(so==="margin")f.sort((a,b)=>(a.m??999)-(b.m??999));else if(so==="reported")f.sort((a,b)=>(b.ev??-1)-(a.ev??-1));else f.sort((a,b)=>a.k.localeCompare(b.k,undefined,{numeric:true}));
+ $("cnt").textContent=`${f.length} races`;const cn=c=>c?`${esc(c.n)} (${c.p}) ${c.pc??"–"}%`:"–";
+ $("tb").innerHTML=f.map(r=>`<tr><td><b>${esc(r.k)}</b> ${flipB(r)}</td><td>${cn(r.a)}</td><td>${r.b?cn(r.b):r.a?"Unopposed":"–"}</td><td class="n">${r.m==null?"–":r.m.toFixed(1)}</td><td class="n">${r.ev==null?"–":r.ev+"%"}</td><td>${status(r)}</td><td>${esc(PN[r.ip]||"–")}</td><td>${r.cl?"–":r.pj&&r.pj.m!=null?`${esc(r.pj.p)} +${r.pj.m} (${r.pj.lo} to ${r.pj.hi}), ${esc(r.pj.cf)}`:"–"}</td></tr>`).join("")||'<tr><td colspan="8" class="small">No races match.</td></tr>'}
+function all(){hero();ticker();drawMap();closest();keys();tabsUI();table()}
+// countdown
+function cd(){if(!D)return;const next=new Date(D.utc).getTime()+6*60e3,s=Math.round((next-Date.now())/1e3);$("cd").textContent=s>0?`Next update in ${Math.floor(s/60)}:${String(s%60).padStart(2,"0")}`:"Update due, checking…"}
+setInterval(cd,1000);
+async function load(){try{const r=await fetch("data.json?t="+Date.now(),{cache:"no-store"});const n=await r.json();if(D&&n.utc===D.utc)return;
+ ["S","G","H","O"].forEach(k=>n[k].forEach(enrich));D=n;$("at").textContent=sgt(D.utc);all();cd()}catch(e){$("at").textContent="data unavailable, retrying"}}
+// controls
+function seg(id,fn){$(id).addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;$(id).querySelectorAll("button").forEach(x=>x.classList.toggle("on",x===b));fn(b.dataset.v)})}
+seg("mapSeg",v=>{mapK=v;drawMap()});seg("closeSeg",v=>{closeK=v;closest()});
+$("tabs").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;tab=b.dataset.v;$("st").value="All";tabsUI();table()});
+["st","so"].forEach(i=>$(i).addEventListener("change",table));$("q").addEventListener("input",table);
+const th=localStorage.getItem("theme")||(matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light");
+function setTheme(t){document.documentElement.dataset.theme=t;localStorage.setItem("theme",t);$("theme").textContent=t==="dark"?"☀ Light":"◐ Dark";if(D)all()}
+$("theme").onclick=()=>setTheme(document.documentElement.dataset.theme==="dark"?"light":"dark");setTheme(th);
+fetch("vendor/states-albers-10m.json").then(r=>r.json()).then(t=>{topo=t;load();setInterval(load,60e3)});
 </script></body></html>
