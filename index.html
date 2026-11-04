@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>US 2026 Election: Live Results and Estimates</title>
+<meta name="description" content="Live counts for Senate, governor, statewide offices and all 435 House seats.">
+<style>
+:root{--a:#1d4ed8;--bg:#f7f8fa;--card:#fff;--b:#e3e6eb;--t:#1a1d23;--m:#5b6270}
+*{box-sizing:border-box}body{margin:0;font:15px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--t)}
+.w{max-width:1200px;margin:0 auto;padding:16px}h1{font-size:1.5rem;margin:.2em 0}h2{font-size:1.15rem;margin:0 0 .5em}
+.sub{color:var(--m);margin:0 0 16px}.card{background:var(--card);border:1px solid var(--b);border-radius:10px;padding:14px;margin-bottom:16px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}@media(max-width:700px){.grid{grid-template-columns:1fr}}
+dl{display:grid;grid-template-columns:1fr auto;gap:6px 12px;margin:0}dt{color:var(--m)}dd{margin:0;font-weight:600;text-align:right}
+.tabs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}.tabs button{border:1px solid var(--b);background:#fff;border-radius:999px;padding:6px 12px;cursor:pointer;font:inherit;font-size:14px}
+.tabs button.on{background:var(--a);color:#fff;border-color:var(--a)}.tabs small{opacity:.75;margin-left:4px}
+.ctl{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px}@media(max-width:700px){.ctl{grid-template-columns:1fr}}
+label{display:block;font-size:13px;color:var(--m)}select,input{width:100%;padding:8px;border:1px solid var(--b);border-radius:6px;font:inherit;background:#fff}
+.tw{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:14px}th,td{padding:7px 8px;border-bottom:1px solid var(--b);text-align:left;white-space:nowrap}
+th{background:#f1f3f6;position:sticky;top:0}td.n,th.n{text-align:right}.called{color:#15803d;font-weight:600}.muted{color:var(--m)}
+.note{background:#eef3ff;border-left:3px solid var(--a);padding:10px;border-radius:6px}a{color:var(--a)}.foot{color:var(--m);font-size:13px}
+</style></head><body><div class="w">
+<h1>US 2026 General Election: Results and Estimates</h1>
+<p class="sub">Live counts from the 3 Nov 2026 election. <b>Last updated: <span id="at">loading…</span></b></p>
+<div class="card"><h2>Control of Congress</h2><p class="muted">Senate counts include seats not up this year. Estimates add uncalled races where SuperChief's estimate has medium or high confidence. SuperChief's estimate, not a race call.</p>
+<div class="grid"><div><h2>Senate</h2><dl id="cS"></dl></div><div><h2>House</h2><dl id="cH"></dl></div></div></div>
+<div class="card"><h2>Races</h2><div class="tabs" id="tabs"></div>
+<div class="ctl"><div><label for="st">State</label><select id="st"></select></div>
+<div><label for="so">Sort by</label><select id="so"><option value="race">Race</option><option value="margin">Closest margin</option><option value="reported">Most reported</option></select></div>
+<div><label for="q">Search</label><input id="q" placeholder="Race or candidate"></div></div>
+<p class="muted" id="cnt"></p><div class="tw"><table><thead><tr><th>Race</th><th>Leader</th><th>Second</th><th class="n">Margin</th><th class="n">Reported</th><th>Status</th><th>SuperChief's estimate, not a race call</th><th>Confidence</th><th>Rating</th></tr></thead><tbody id="tb"></tbody></table></div>
+<p class="muted">Margin is the leader's lead in points over second place in votes counted so far. Reported is the share of expected vote counted. Rating is the results feed's pre-election rating.</p></div>
+<div class="card"><h2>How the estimate works</h2>
+<p>SuperChief's estimate is not a race call. For each uncalled race it takes the current lead and assumes the uncounted vote lands within 20 points either side of it, so the range is the current margin plus or minus 20 points times the share still uncounted. Confidence is high when the whole range favors the leader and the lead is 10 points or more, medium when the range still favors the leader, low when it crosses zero, and very low under 10% reported.</p>
+<p>A called flip comes from the results feed. A possible flip means the current leader's party differs from the incumbent's. Competitive House combines the feed's toss-up and lean ratings with the closest uncalled margins, up to 60 races. Too close to call lists uncalled races with a lead under 5 points and low or very low confidence.</p>
+<p class="note">Exit polls: none are published in the public feeds checked, so none are shown.</p></div>
+<div class="card foot">Results data: The New York Times / AP. Source: <a href="https://www.nytimes.com/interactive/2026/11/03/us/elections/results-house.html" rel="noopener">New York Times live results</a>. Race calls name the outlet that made them. Page refreshes data every 5 minutes.</div>
+</div>
+<script>
+const RTL={T:"Toss-up",LD:"Lean D",LR:"Lean R",KD:"Likely D",KR:"Likely R",SD:"Solid D",SR:"Solid R"};
+const $=id=>document.getElementById(id),esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+function parse(x,kind,suf){let r;
+ if(typeof x==="string"){const p=x.split("|");r={race:p[0]+suf,st:p[0].slice(0,2),a:"",ap:"",apct:null,b:"",bp:"",bpct:null,ev:null,by:p[1],wp:p[2],w:"",fl:0,ip:p[3],rt:p[4]}}
+ else{const n=i=>x[i]===null?null:Number(x[i]),s=i=>String(x[i]??"");r={race:s(0)+suf,st:s(0).slice(0,2),a:s(1),ap:s(2),apct:n(3),b:s(4),bp:s(5),bpct:n(6),ev:n(7),by:s(8),wp:s(9),w:s(10),fl:Number(x[11]),ip:s(12),rt:s(13)}}
+ r.m=null;r.pl="";r.pp="";r.pm="";r.cf="";r.kind=kind;
+ if(r.apct!==null)r.m=r.bpct!==null?Math.round((r.apct-r.bpct)*10)/10:100;
+ if(!r.by&&r.m!==null&&r.ev!==null){const h=20*(1-Math.min(r.ev,100)/100),lo=r.m-h,hi=r.m+h;r.pl=`${r.a} (${r.ap})`;r.pp=r.ap;
+  r.pm=`+${r.m.toFixed(1)} (${lo>=0?"+":""}${lo.toFixed(1)} to +${hi.toFixed(1)})`;r.cf=r.ev<10?"Very low":lo>0&&r.m>=10?"High":lo>0?"Medium":"Low"}
+ return r}
+let D,S,G,O,H,ALL,COMP,tab="senate";
+const isClose=r=>!r.by&&r.m!==null&&r.m<5&&(r.cf==="Low"||r.cf==="Very low"),isFlip=r=>r.fl>0;
+function seats(rows,won){const p=[...won];let u=0;for(const r of rows){if(r.by)continue;if(r.cf==="High"||r.cf==="Medium")p[r.pp==="D"?0:r.pp==="R"?1:2]++;else u++}return{p,u}}
+function ctl(el,won,s,maj,tot,called){$(el).innerHTML=[["Majority",`${maj} of ${tot} seats`],["Seats held or called (D / R / Other)",won.join(" / ")],["Plus SuperChief's estimate (D / R / Other)",s.p.join(" / ")],["Uncertain or no data",`${s.u} races`],["Races called this cycle",called]].map(([a,b])=>`<dt>${a}</dt><dd>${b}</dd>`).join("")}
+function base(){return tab==="senate"?S:tab==="gov"?G:tab==="other"?O:tab==="house"?H:tab==="comp"?H.filter(r=>COMP.has(r.race)):tab==="flips"?ALL.filter(isFlip):ALL.filter(isClose)}
+function states(){const b=base(),cur=$("st").value||"All";const l=["All",...[...new Set(b.map(r=>r.st))].sort()];$("st").innerHTML=l.map(s=>`<option>${s}</option>`).join("");$("st").value=l.includes(cur)?cur:"All"}
+function render(){const st=$("st").value,q=$("q").value.toLowerCase(),so=$("so").value;
+ const f=base().filter(r=>(st==="All"||r.st===st)&&(!q||`${r.race} ${r.a} ${r.b}`.toLowerCase().includes(q)));
+ if(so==="margin")f.sort((a,b)=>(a.m??999)-(b.m??999));else if(so==="reported")f.sort((a,b)=>(b.ev??-1)-(a.ev??-1));else f.sort((a,b)=>a.race.localeCompare(b.race,undefined,{numeric:true}));
+ $("cnt").textContent=`${f.length} races`;
+ $("tb").innerHTML=f.map(r=>{const lab=r.race+(r.fl===1?" (flip)":r.fl===2?" (possible flip)":"");
+  const status=r.by?`<span class="called">Called ${r.w?esc(r.w)+" ":""}(${esc(r.wp)}) by ${esc(r.by)}</span>`:r.ev===null?'<span class="muted">no data</span>':"Not called";
+  const c=[esc(lab),r.a?esc(`${r.a} (${r.ap}) ${r.apct}%`):"no data",r.b?esc(`${r.b} (${r.bp}) ${r.bpct??""}%`):r.a?"Unopposed":"no data"];
+  return `<tr><td>${c[0]}</td><td>${c[1]}</td><td>${c[2]}</td><td class="n">${r.m===null?"–":r.m.toFixed(1)}</td><td class="n">${r.ev===null?"–":r.ev+"%"}</td><td>${status}</td><td>${r.by?"Called":r.pl?esc(r.pl+" "+r.pm):"no data"}</td><td>${r.by?"":r.cf||"no data"}</td><td>${RTL[r.rt]??""}</td></tr>`}).join("")||'<tr><td colspan="9" class="muted">No races match.</td></tr>'}
+function tabsUI(){const t=[["senate","Senate",S.length],["gov","Governor",G.length],["other","Other statewide",O.length],["house","House",H.length],["comp","Competitive House",COMP.size],["flips","Flips",ALL.filter(isFlip).length],["close","Too close to call",ALL.filter(isClose).length]];
+ $("tabs").innerHTML=t.map(([v,l,c])=>`<button data-v="${v}" class="${v===tab?"on":""}">${l}<small>${c}</small></button>`).join("")}
+async function load(){try{const res=await fetch("data.json?t="+Date.now(),{cache:"no-store"});D=await res.json()}catch(e){$("at").textContent="data unavailable, retrying";return}
+ H=D.H.map(x=>parse(x,"House",""));S=D.S.map(x=>parse(x,"Senate"," Senate"));G=D.G.map(x=>parse(x,"Governor"," Governor"));O=D.O.map(x=>parse(x,"Statewide",""));ALL=[...S,...G,...O,...H];
+ COMP=new Set(H.filter(r=>["T","LD","LR"].includes(r.rt)).map(r=>r.race));for(const r of H.filter(r=>!r.by&&r.m!==null&&(r.ev??0)>=10).sort((a,b)=>a.m-b.m)){if(COMP.size>=60)break;COMP.add(r.race)}
+ $("at").textContent=/SGT/.test(D.at)?D.at:D.at+" SGT";
+ ctl("cS",D.sc,seats(S,D.sc),51,100,S.filter(r=>r.by).length);ctl("cH",D.hc,seats(H,D.hc),218,435,H.filter(r=>r.by).length);
+ tabsUI();states();render()}
+$("tabs").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;tab=b.dataset.v;$("st").value="All";tabsUI();states();render()});
+["st","so"].forEach(i=>$(i).addEventListener("change",render));$("q").addEventListener("input",render);
+load();setInterval(load,300000);
+</script></body></html>
